@@ -12,8 +12,8 @@ public class Common {
     public static String uploadFile(PdfApi pdfApi, String name) throws ApiException {
         String folder = UUID.randomUUID().toString();
         File file = new File(name);
-        String path = folder + "/" + FilenameUtils.getName(name);
+        String path = "aaa/" + FilenameUtils.getName(name);
         FilesUploadResult result =  pdfApi.uploadFile(path, file, null);
-        return folder;
+        return "aaa";
     }
 }

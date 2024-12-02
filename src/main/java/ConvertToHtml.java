@@ -2,12 +2,16 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
+import cn.hutool.core.io.FileUtil;
 import com.aspose.asposecloudpdf.ApiException;
 import com.aspose.asposecloudpdf.api.PdfApi;
 import com.aspose.asposecloudpdf.model.FilesUploadResult;
 import com.aspose.asposecloudpdf.model.PartsEmbeddingModes;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.filefilter.IOFileFilter;
+import org.apache.commons.io.filefilter.TrueFileFilter;
+import org.apache.commons.lang3.StringUtils;
 
 public class ConvertToHtml {
     public static void toHtml(String appKey, String appSid, String from, String to) throws ApiException, IOException {
@@ -24,7 +28,7 @@ public class ConvertToHtml {
         Integer minimalLineWidth = null;
         Boolean preventGlyphsGrouping = null;
         Boolean splitCssIntoPages = false;
-        Boolean splitIntoPages = true;
+        Boolean splitIntoPages = false;
         Boolean useZOrder = null;
         String antialiasingProcessing = null;
         String cssClassNamesPrefix = null;
@@ -85,12 +89,41 @@ public class ConvertToHtml {
     }
 
     public static void main(String args[]) throws ApiException, IOException {
+        /*
         String appSid = args[0];
         String appKey = args[1];
         String from = args[2];
         String to = args[3];
+         */
 
-        toHtml(appKey, appSid, from, to);
+        String  appKey = "51306b086ec88f74cd9703025a780b93";
+        String appSid = "4d342d73-e219-4a6c-88e9-1a4e78b6b2fd";
+        File bookDataDir = new File("/home/poh/projects/clbee/data/book/aidt/2536/data");
+        File targetDir = new File("/home/poh/projects/clbee/data/target/aidt/2536/assets");
+
+
+        List<File> fileList = (List<File>) FileUtils.listFiles(bookDataDir, new IOFileFilter() {
+            @Override
+            public boolean accept(File file) {
+                return accept(file, file.getName());
+            }
+
+            @Override
+            public boolean accept(File file, String name) {
+                return StringUtils.contains(file.getAbsolutePath(), "data") && StringUtils.endsWith(name, ".pdf");
+            }
+        }, TrueFileFilter.INSTANCE);
+
+
+        for(File file : fileList) {
+            File to = FileUtil.file(targetDir, FilenameUtils.getBaseName(file.getName()), FilenameUtils.getBaseName(file.getName()) + ".html");
+
+
+            System.out.println("from : to");
+            System.out.println(file.getAbsolutePath() +":"+ to.getAbsolutePath());
+            toHtml(appKey, appSid, file.getAbsolutePath(), to.getAbsolutePath());
+        }
+
 
     }
 
